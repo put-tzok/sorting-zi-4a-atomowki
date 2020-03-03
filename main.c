@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-unsigned int ns[] = {10, 100, 1000, 10000, 100000, 1000000, 10000000};
+unsigned int ns[] = {10, 100, 1000, 10000};
  
 void fill_increasing(int *t, unsigned int n) {
     int i;
@@ -86,44 +86,40 @@ void insertion_sort(int *t, unsigned int n) {
         t[j + 1] = key;
     }
 }
- 
-//void swap(int* a, int* b) 
-//{ 
-//    int t = *a; 
-//    *a = *b; 
-//    *b = t; 
-//} 
-//  
-//int partition (int *t, int low, int high) 
-//{ 
-//    int pivot = t[high];  
-//    int i = (low - 1);   
-//  
-//    for (int j = low; j <= high- 1; j++) 
-//    { 
-//        if (t[j] < pivot) 
-//        { 
-//            i++;     
-//            swap(&t[i], &t[j]); 
-//        } 
-//    } 
-//    swap(&t[i + 1], &t[high]); 
-//    return (i + 1); 
-//} 
-//  
-//
-//void quickSort(int *t, int *t, int high) 
-//{ 
-//    if (low < high) 
-//    { 
-//
-//        int pi = partition(t, low, high); 
-//  
-//
-//        quickSort(t, low, pi - 1); 
-//        quickSort(t, pi + 1, high); 
-//    } 
-//} 
+     void swap(int *xp, int *yp)
+     {
+        int temp = *xp;
+        *xp = *yp;
+        *yp = temp;
+     }
+
+int partition (int arr[], int low, int high) 
+{ 
+    int pivot = arr[high];
+    int i = (low - 1); 
+  	int j;
+    for (j = low; j <= high- 1; j++) 
+    {  
+        if (arr[j] < pivot) 
+        { 
+            i++;    
+            swap(&arr[i], &arr[j]); 
+        } 
+    } 
+    swap(&arr[i + 1], &arr[high]); 
+    return (i + 1); 
+} 
+
+void quick_sort(int arr[], int low, int high) 
+{ 
+    if (low < high) 
+    { 
+        int pi = partition(arr, low, high); 
+  
+        quick_sort(arr, low, pi - 1); 
+        quick_sort(arr, pi + 1, high); 
+    } 
+}
   
  
 void heap_sort(int *t, unsigned int n) {
@@ -172,10 +168,15 @@ void (*check_functions[])(int *, unsigned int) = { is_random, is_increasing, is_
 void (*sort_functions[])(int *, unsigned int) = { selection_sort, insertion_sort,/* quick_sort, heap_sort*/ };
  
 char *fill_names[] = { "Random", "Increasing", "Decreasing", "V-Shape" };
-char *sort_names[] = { "SelectionSort", "InsertionSort", "QuickSort", "HeapSort" };
+char *sort_names[] = { "SelectionSort", "InsertionSort"};
  
 int main() {
-    int i,j,k;
+	FILE *fp;
+	 if ((fp=fopen("dane.txt", "w"))==NULL) {
+     printf ("Nie mogê otworzyæ pliku test.txt do zapisu!\n");
+     exit(1);
+     }
+    int i,j,k,l,m; 
     for (i = 0; i < sizeof(sort_functions) / sizeof(*sort_functions) ; i++) {
     void(*sort)(int *, unsigned int) = sort_functions[i];
  
@@ -189,19 +190,40 @@ int main() {
  
                 fill(t, n);
                 check(t, n);
- 
+				//printArray(t, n);
                 clock_t begin = clock();
-               
                 sort(t, n);
-               
+                //printArray(t, n);
                 clock_t end = clock();
-               
                 is_sorted(t, n);
- 
-                printf("%s\t%s\t%u\t%f\n", sort_names[i], fill_names[j], n, (double)(end - begin) / (double)CLOCKS_PER_SEC);
+                fprintf(fp, "%s\t%s\t%u\t%f\n", sort_names[i], fill_names[j], n, (double)(end - begin) / (double)CLOCKS_PER_SEC);
+    	
                 free(t);
             }
         }
     }
+
+				            for (l = 0; l < sizeof(fill_functions) / sizeof(*fill_functions); l++) {
+				            void (*fill)(int *, unsigned int) = fill_functions[l];
+				            void (*check)(int *, unsigned int) = check_functions[l];
+				 
+				            for (m = 0; m < sizeof(ns) / sizeof(*ns); m++) {
+				                unsigned int n = ns[m];
+				                int *t = malloc(n * sizeof(*t));
+				 
+				                fill(t, n);
+				                check(t, n);
+								//printArray(t, n);
+				                clock_t begin = clock();
+				                quick_sort(t, 0, n-1);
+				                //printArray(t, n);
+				                clock_t end = clock();
+				                is_sorted(t, n);
+				                fprintf(fp, "%s\t%s\t%u\t%f\n", "QuickSort", fill_names[l], n, (double)(end - begin) / (double)CLOCKS_PER_SEC);
+				            	
+				                free(t);
+				            }
+				        }
+				        fclose(fp);
     return 0;
 }
