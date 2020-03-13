@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-unsigned int ns[] = {10000};
+unsigned int ns[] = {1000, 10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000};
 
 
 void fill_increasing(int *t, unsigned int n) {
@@ -130,61 +130,60 @@ void quick_sort(int *t, unsigned int n)
 }
 
 
+int heap_d(int *t, int index, int *psize){
+	int size = *psize;
+	int l = index * 2 + 1;
+	int r = index * 2 + 2;
+	int argmin;
+	if(l>=size){
+		if((r >= size) || (t[l] < t[r]))
+		return argmin = l;
+		 else 
+		 return r;
+		if(t[argmin] < t[index]){
+			swap(&t[index], &t[argmin]);
+			heap_d(t, argmin, size);
+		}
+	}
+}
 
-//int heap_d(int *t, int index, int *psize){
-//	int size = *psize;
-//	int l = index * 2 + 1;
-//	int r = index * 2 + 2;
-//	int argmin;
-//	if(l>=size){
-//		if((r >= size) || (t[l] < t[r]))
-//		return argmin = l;
-//		 else 
-//		 return r;
-//		if(t[argmin] < t[index]){
-//			swap(&t[index], &t[argmin]);
-//			heap_d(t, argmin, size);
-//		}
-//	}
-//}
-//
-//void heap_up(int *t, int index){
-//	if(index > 0){
-//		int parent = (index -1)/2;
-//		if(t[index] < t[parent]){
-//			swap(&t[index], &t[parent]);
-//			heap_up(t, parent);
-//		}
-//	}
-//}
-//
-//int heap_poll(int *t, int *psize){
-//	int size = *psize;
-//	int v = t[0];
-//	size -= 1;
-//	t[0] = t[size];
-//	heap_d(t, 0, size);
-//	return v;
-//}
-//
-//void heap_add(int *t, int *psize, int *v){
-//	int size = *psize;
-//	t[size] = &v;
-//	heap_up(t, size);
-//	size += 1;
-//}
-//
-// 
-//void heap_sort(int *t, unsigned int n) {
-//    int size = 0;
-//    int i;
-//    for(i = 0; i < n; i++){
-//    	heap_add(t, size, &t[i]);
-//	}
-//	for(i = 0; i < n; i ++){
-//		t[i] = heap_poll(t, size);
-//	}
-//}
+void heap_up(int *t, int index){
+	if(index > 0){
+		int parent = (index -1)/2;
+		if(t[index] < t[parent]){
+			swap(&t[index], &t[parent]);
+			heap_up(t, parent);
+		}
+	}
+}
+
+int heap_poll(int *t, int *psize){
+	int size = *psize;
+	int v = t[0];
+	size -= 1;
+	t[0] = t[size];
+	heap_d(t, 0, size);
+	return v;
+}
+
+void heap_add(int *t, int *psize, int *v){
+	int size = *psize;
+	t[size] = &v;
+	heap_up(t, size);
+	size += 1;
+}
+
+ 
+void heap_sort(int *t, unsigned int n) {
+    int size = 0;
+    int i;
+    for(i = 0; i < n; i++){
+    	heap_add(t, size, &t[i]);
+	}
+	for(i = 0; i < n; i ++){
+		t[i] = heap_poll(t, size);
+	}
+}
  
 void is_random(int *t, unsigned int n) {
     return;
@@ -227,8 +226,8 @@ void is_sorted(int *t, unsigned int n) {
 
 
  
-void (*fill_functions[])(int *, unsigned int) = { fill_random, fill_increasing, fill_decreasing, fill_vshape };
-void (*check_functions[])(int *, unsigned int) = { is_random, is_increasing, is_decreasing, is_vshape };
+void (*fill_functions[])(int *, unsigned int) = { fill_random, fill_increasing, fill_decreasing, /*fill_vshape*/ };
+void (*check_functions[])(int *, unsigned int) = { is_random, is_increasing, is_decreasing, /*is_vshape */};
 void (*sort_functions[])(int *, unsigned int) = { selection_sort, insertion_sort, quick_sort, /*heap_sort*/ };
  
 char *fill_names[] = { "Random", "Increasing", "Decreasing", "V_shape" };
