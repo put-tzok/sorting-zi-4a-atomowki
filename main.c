@@ -261,11 +261,6 @@ int main() {
 	            }
         }
    }
-//   int z,x;
-//   for(z = 0; z < 16; z++){
-//   	x = rand()%50+20;
-//   	printf("X = %d\n",x);
-//   }
    fclose(fp);
     return 0;
 }
